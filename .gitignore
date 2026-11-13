@@ -1,0 +1,19 @@
+# Папки сборки CMake
+build*/
+cmake-build-*/
+
+# Бинарники и объектные файлы
+*.o
+*.obj
+*.exe
+*.out
+memory_lab
+memory_lab_gui
+
+# Файлы IDE
+.vscode/
+.idea/
+*.user
+
+# ОС
+.DS_Store
