@@ -24,38 +24,45 @@
 sudo apt update
 sudo apt install -y build-essential cmake gdb valgrind qt6-base-dev libgl1-mesa-dev
 
-
 ## Сборка и запуск
 
 Мы подготовили две версии: с графическим интерфейсом (для наглядной демонстрации) и консольную (для получения чистых логов).
 
 **Для сборки GUI:**
 cmake -S . -B build-gui -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=ON -DENABLE_GUI=ON
+
 cmake --build build-gui --parallel
+
 ./build-gui/memory_lab_gui
 
-##Тестирование своего кода
+## Тестирование своего кода
 Если вы хотите проверить свой код на ошибки, вам нужно:
 1) Открыть файл src/main.cpp и вставить туда свой код (или добавить новую функцию в namespace).
 2) Если вы пользуетесь GUI, не забудьте добавить кнопку для вашего нового сценария в файле src/gui_main.cpp в функции makeGroup.
 3) Пересобрать проект. Санитайзеры автоматически проверят ваш код.
 
-##Работа с консольную
+## Работа с консольную
 Если нужно увидеть именно логи инструментов запускайте файл в терминале
 
 Демонстрация AddressSanitizer:
+
 ./build-sanitize/memory_lab oob
+
 ./build-sanitize/memory_lab uaf
 
 Демонстрация UndefinedBehaviorSanitizer:
+
 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1 ./build-sanitize/memory_lab overflow
 
 Утечки памяти (LeakSanitizer):
 ASAN_OPTIONS=detect_leaks=1 ./build-sanitize/memory_lab leak
 
 Если нужен анализ с помощью Valgrind:
+
 cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=OFF
+
 cmake --build build-debug --parallel
+
 valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./build-debug/memory_lab leak
 
 Как вы должны читать вывод в терминале:
@@ -68,9 +75,7 @@ valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./build-deb
 4) Причина (аллокация/освобождение): для use-after-free санитайзер покажет, где память выделили и где освободили.
 5) Исправление: как правило, это безопасное владение памятью (RAII), проверка границ или арифметика в более широком типе.
 
-
-
-##Определения, что может произойти
+## Определения, что может произойти
 1) Утечка памяти (leak): Выделенный блок больше недоступен программе и не освобождён. Программа не падает сразу, но память накапливается. Ловится при завершении процесса.
 2) Use-after-free: Обращение к объекту после того, как память была освобождена (delete). Указатель остался «висячим». Ловится в момент обращения.
 3) Undefined behavior (UB): Стандарт C++ не задаёт поведение для этой операции (например, переполнение знакового int). Компилятор может сделать что угодно, поэтому ошибка может не проявляться годами. Ловится в момент выполнения операции.
