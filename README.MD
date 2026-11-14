@@ -2,7 +2,7 @@
 
 Привет! Это небольшое учебное приложение на C++17, созданное для наглядного поиска и демонстрации типичных ошибок работы с памятью и неопределённого поведения (UB). 
 
-Внутри есть консольная версия и удобный графический интерфейс на Qt, который позволяет запускать сценарии в один клик и читать отчёты санитайзеров в понятном виде.
+Внутри есть консольная версия и графический интерфейс на Qt, который позволяет запускать ваши cwtyfhbb и читать отчёты санитайзеров в понятном виде.
 
 В проекте подготовлены четыре классических дефекта и четыре варианта их безопасного исправления:
 
@@ -21,7 +21,9 @@
 Для работы понадобятся компилятор GCC/Clang, система сборки CMake, отладчик GDB, утилита Valgrind и библиотеки Qt6.
 
 Установить всё необходимое можно одной командой:
+
 sudo apt update
+
 sudo apt install -y build-essential cmake gdb valgrind qt6-base-dev libgl1-mesa-dev
 
 ## Сборка и запуск
@@ -29,6 +31,7 @@ sudo apt install -y build-essential cmake gdb valgrind qt6-base-dev libgl1-mesa-
 Мы подготовили две версии: с графическим интерфейсом (для наглядной демонстрации) и консольную (для получения чистых логов).
 
 **Для сборки GUI:**
+
 cmake -S . -B build-gui -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=ON -DENABLE_GUI=ON
 
 cmake --build build-gui --parallel
@@ -55,6 +58,7 @@ cmake --build build-gui --parallel
 UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1 ./build-sanitize/memory_lab overflow
 
 Утечки памяти (LeakSanitizer):
+
 ASAN_OPTIONS=detect_leaks=1 ./build-sanitize/memory_lab leak
 
 Если нужен анализ с помощью Valgrind:
