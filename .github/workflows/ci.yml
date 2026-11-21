@@ -1,0 +1,28 @@
+name: Sanitizers CI
+
+on: [push, pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake qt6-base-dev libgl1-mesa-dev
+
+      - name: Configure CMake
+        run: cmake -S . -B build-sanitize -DCMAKE_BUILD_TYPE=Debug -DENABLE_SANITIZERS=ON -DENABLE_GUI=ON
+
+      - name: Build
+        run: cmake --build build-sanitize --parallel
+
+      - name: Run fixed scenarios (must pass)
+        run: |
+          ./build-sanitize/memory_lab oob-fixed
+          ./build-sanitize/memory_lab uaf-fixed
+          UBSAN_OPTIONS=print_stacktrace=1:halt_on_error=1 ./build-sanitize/memory_lab overflow-fixed
+          ASAN_OPTIONS=detect_leaks=1 ./build-sanitize/memory_lab leak-fixed
